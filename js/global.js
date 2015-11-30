@@ -8,5 +8,5 @@ var video_loaded_a = false;
 var video_loaded_b = false;
 var selected_value = null;
 
-var server_url = 'http://172.31.44.184'
+var server_url = 'http://elmo.csail.mit.edu'
 var topk = 10

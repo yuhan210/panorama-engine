@@ -25,7 +25,7 @@ function setPageFormat(){
 
 
 function getVideoURL(video_name, start_time, end_time) {
-        return server_url + '/panorama-search/videos/' + video_name + '.mp4#t=' + start_time + ',' + end_time
+        return server_url + '/panorama-engine/videos/' + video_name + '.mp4#t=' + start_time
 }
 
 function showVideos(metadata, opt_text_vis, opt_text) {
@@ -38,15 +38,15 @@ function showVideos(metadata, opt_text_vis, opt_text) {
         opt_text_video = opt_text[i];
 
         html_str += '<tr>'
-                    +' <td> <video width = "420" controls autoplay loop muted> <source src ="' + getVideoURL(metadata_video['video_name'], metadata_video['start_time'], metadata_video['end_time']) + '" type="video/mp4">' 
+                    +' <td> <video width = "420" controls muted> <source src ="' + getVideoURL(metadata_video['video_name'], metadata_video['start_time'], metadata_video['end_time']) + '" type="video/mp4">' 
 					+  'Your browser does not support HTML5 video.'
 					+  '</video> </td>'
 
-                    +' <td> <video width = "420" controls autoplay loop muted> <source src ="' + getVideoURL(opt_text_vis_video['video_name'], opt_text_vis_video['start_time'], opt_text_vis_video['end_time']) + '" type="video/mp4">' 
+                    +' <td> <video width = "420" controls muted> <source src ="' + getVideoURL(opt_text_vis_video['video_name'], opt_text_vis_video['start_time'], opt_text_vis_video['end_time']) + '" type="video/mp4">' 
 					+  'Your browser does not support HTML5 video.'
 					+  '</video> </td>'
  
-                    +' <td> <video width = "420" controls autoplay loop muted> <source src ="' + getVideoURL(opt_text_video['video_name'], opt_text_video['start_time'], opt_text_video['end_time']) + '" type="video/mp4">' 
+                    +' <td> <video width = "420" controls muted> <source src ="' + getVideoURL(opt_text_video['video_name'], opt_text_video['start_time'], opt_text_video['end_time']) + '" type="video/mp4">' 
 					+  'Your browser does not support HTML5 video.'
 					+  '</video> </td>'
 
@@ -71,6 +71,7 @@ function processResponse(responseText){
 function doSearch(){
 
     query_str = document.getElementById('searchbox').value;
+	 $('#loading').html('Searching live streams...');
     
     if (window.XMLHttpRequest) {
         var xml_http = new XMLHttpRequest();
@@ -80,7 +81,9 @@ function doSearch(){
                 
                 processResponse(xml_http.responseText);
     	        document.getElementById('loading').style.visibility = 'hidden';
-            }
+            } else if (xml_http.readyState == 4 && xml_http.status == 500){
+				  $('#loading').html('Visual search does not support "' + query_str + '". Try query starting with "person, dog, cat, car". How about "person ' + query_str + '"?');
+				}
 
         };
         xml_http.open("GET", server_url + ':5000/search?query=' + query_str, true);
